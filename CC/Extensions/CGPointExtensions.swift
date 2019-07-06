@@ -9,12 +9,22 @@
 import CoreGraphics
 
 public extension CGPoint {
+  init(_ x: CGFloat, _ y: CGFloat) {
+    self.init(x: x, y: y)
+  }
+}
+
+public extension CGPoint {
   static prefix func -(lhs: CGPoint) -> CGPoint {
     return CGPoint(x: -lhs.x, y: -lhs.y)
   }
 
   static func +(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
     return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
+  }
+
+  static func +(lhs: CGPoint, rhs: CGVector) -> CGPoint {
+    return CGPoint(x: lhs.x + rhs.dx, y: lhs.y + rhs.dy)
   }
 
   static func +=(lhs: inout CGPoint, rhs: CGPoint) {
@@ -24,10 +34,6 @@ public extension CGPoint {
 
   static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
     return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
-  }
-
-  static func *(lhs: CGPoint, rhs: CGPoint) -> CGFloat {
-    return lhs.dot(rhs)
   }
 
   static func *(lhs: CGPoint, rhs: CGFloat) -> CGPoint {
@@ -40,6 +46,10 @@ public extension CGPoint {
 
   static func /(lhs: CGPoint, rhs: CGFloat) -> CGPoint {
     return CGPoint(x: lhs.x / rhs, y: lhs.y / rhs)
+  }
+
+  static func /(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    return CGPoint(x: lhs.x / rhs.x, y: lhs.y / rhs.y)
   }
 
   func translated(by dx: CGFloat, _ dy: CGFloat) -> CGPoint {
@@ -58,6 +68,10 @@ public extension CGPoint {
 
   var length: CGFloat {
     return sqrt(x * x + y * y)
+  }
+
+  var angle: CGFloat {
+    return atan2(y, x)
   }
   
   var lengthSquared: CGFloat {

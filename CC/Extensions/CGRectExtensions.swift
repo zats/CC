@@ -14,6 +14,10 @@ public extension CGRect {
   var center: CGPoint {
     return CGPoint(x: midX, y: midY)
   }
+  
+  var precscribedCircleRadius: CGFloat {
+    return min(width, height) * 0.5
+  }
 }
 
 public extension CGRect {
@@ -35,5 +39,17 @@ public extension CGRect {
       }
     }
     return splitted
+  }
+
+  mutating func setSizeMaintainingCenter(_ size: CGSize) {
+    self.origin += CGPoint(x: (self.width - size.width) * 0.5,
+                           y: (self.height - size.height) * 0.5)
+    self.size = size
+  }
+
+  func settingSizeMaintainingCenter(_ size: CGSize) -> CGRect {
+    var rect = self
+    rect.setSizeMaintainingCenter(size)
+    return rect
   }
 }
