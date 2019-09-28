@@ -1,6 +1,10 @@
 import CoreGraphics
 
 public extension CGSize {
+  init(side: CGFloat) {
+    self.init(width: side, height: side)
+  }
+  
   static func *(lhs: CGSize, rhs: CGSize) -> CGSize {
     return CGSize(width: lhs.width * rhs.width, height: lhs.height * rhs.height)
   }

@@ -53,3 +53,52 @@ public extension CGRect {
     return rect
   }
 }
+
+public extension CGRect {
+  var topLeft: CGPoint {
+    return CGPoint(x: minX, y: minY)
+  }
+
+  var bottomRight: CGPoint {
+    return CGPoint(x: maxX, y: maxY)
+  }
+
+  var topRight: CGPoint {
+    return CGPoint(x: maxX, y: minY)
+  }
+
+  var bottomLeft: CGPoint {
+    return CGPoint(x: minX, y: maxY)
+  }
+}
+
+public extension CGRect {
+  func extended(with point: CGPoint) -> CGRect {
+    if self == .null {
+      return CGRect(center: point, edges: 0)
+    } else if self.contains(point) {
+      return self
+    }
+    var result = self
+    if point.x < result.minX {
+      result.size.width += result.minX - point.x
+      result.origin.x = point.x
+    } else if point.x > result.maxX {
+      result.size.width += point.x - result.maxX
+    }
+    if point.y < result.minY {
+      result.size.height += result.minY - point.y
+      result.origin.y = point.y
+    } else if point.y > result.maxY {
+      result.size.height += point.y - result.maxY
+    }
+    return result
+  }
+}
+
+public extension CGRect{
+  func center(in bounds: CGRect) -> CGPoint {
+    return CGPoint(x: (bounds.width - self.width) * 0.5,
+                   y: (bounds.height - self.height) * 0.5)
+  }
+}

@@ -20,6 +20,10 @@ public extension Circle {
   }
 }
 
+public extension InfiniteLine {
+
+}
+
 public extension Line {
   // Copied from "GeomUtils 4.as"
   // yeap "as" stands for "ActionSctipt"
@@ -59,8 +63,9 @@ public extension Line {
     if abs(d) < CGFloat.ulpOfOne {
       return nil
     }
-    let u0 = (d2.x * d1.y - d2.y * d1.x) / d
-    let u1 = (d1.x * d1.y - d1.y * d1.x) / d
+    let dAA = self.a - line.a
+    let u0 = (d2.x * dAA.y - d2.y * dAA.x) / d
+    let u1 = (d1.x * dAA.y - d1.y * dAA.x) / d
     if u0 < 0 || u0 > 1 || u1 < 0 || u1 > 1 {
       return nil
     }

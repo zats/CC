@@ -34,6 +34,11 @@ public struct InfiniteLine {
     }
   }
 
+  public init(a: CGPoint, angle: CGFloat) {
+    let unitPoint = CGPoint(angle: angle, distance: 1, from: a)
+    self.init(a: a, b: unitPoint)
+  }
+
   public init(line: Line) {
     self.init(a: line.a, b: line.b)
   }
@@ -57,6 +62,31 @@ public struct InfiniteLine {
     }
   }
 
+  private static func pointHashCalculator(point: CGPoint, hasher: inout Hasher) {
+    hasher.combine(Int(point.x))
+    hasher.combine(Int(point.y))
+  }
+
+  private static func pointEqualityCalculator(p1: CGPoint, p2: CGPoint) -> Bool {
+    return Int(p1.x) == Int(p2.x) && Int(p1.y) == Int(p2.y)
+  }
+
+  public func clipped(to bounds: CGRect) -> Line? {
+    var points: Set<CustomHashable<CGPoint>> = []
+    for edge in Polygon(rect: bounds).edges {
+      if let intersection = self.intersection(with: InfiniteLine(line: edge)) {
+        points.insert(CustomHashable(value: intersection,
+                                     hashCalculator: InfiniteLine.pointHashCalculator,
+                                     equalityCalculator: InfiniteLine.pointEqualityCalculator))
+      }
+    }
+    if points.count >= 2 {
+      let pointsArr = Array(points)
+      return Line(a: pointsArr[0].value, b: pointsArr[1].value)
+    } else {
+      return nil
+    }
+  }
 }
 
 public struct Line {
@@ -75,6 +105,18 @@ public struct Line {
     )
   }
 
+}
+
+public extension Line {
+  func point(at t: CGFloat) -> CGPoint {
+    return a.interpolated(to: b, t: t)
+  }
+}
+
+extension Line: Equatable {
+  public static func ==(lhs: Line, rhs: Line) -> Bool {
+    return lhs.a == rhs.a && lhs.b == rhs.b
+  }
 }
 
 public extension Line {

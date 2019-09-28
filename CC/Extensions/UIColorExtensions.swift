@@ -83,3 +83,72 @@ public extension UIColor {
   }
 }
 
+public struct Point3D {
+  let x: CGFloat
+  let y: CGFloat
+  let z: CGFloat
+
+  public init(x: CGFloat, y: CGFloat, z: CGFloat) {
+    self.x = x
+    self.y = y
+    self.z = z
+  }
+
+  public init(_ tuple: (CGFloat, CGFloat, CGFloat)) {
+    self.init(x: tuple.0,
+              y: tuple.1,
+              z: tuple.2)
+  }
+}
+
+public extension Point3D {
+  static func * (lhs: Point3D, rhs: CGFloat) -> Point3D {
+    return Point3D(x: lhs.x * rhs, y: lhs.y * rhs, z: lhs.z * rhs)
+  }
+
+  static func * (rhs: CGFloat, lhs: Point3D) -> Point3D {
+    return lhs * rhs
+  }
+
+  static func * (lhs: Point3D, rhs: Point3D) -> Point3D {
+    return Point3D(x: lhs.x * rhs.x,
+                   y: lhs.y * rhs.y,
+                   z: lhs.z * rhs.z)
+  }
+
+  static func +(lhs: Point3D, rhs: Point3D) -> Point3D {
+    return Point3D(x: lhs.x + rhs.x,
+                   y: lhs.y + rhs.y,
+                   z: lhs.z + rhs.z)
+  }
+}
+
+public extension UIColor {
+  struct SinColorConfiguration {
+    let a: Point3D
+    let b: Point3D
+    let c: Point3D
+    let d: Point3D
+  }
+
+
+  static func sinColor(t: CGFloat, conf: SinColorConfiguration) -> UIColor {
+    let angle = 6.28318 * (conf.c * t + conf.d);
+
+    let coss = Point3D(x: cos(angle.x),
+                       y: cos(angle.y),
+                       z: cos(angle.z))
+    let rgb = conf.a + conf.b * coss;
+    return UIColor(red: rgb.x, green: rgb.y, blue: rgb.z, alpha: 1)
+  }
+
+}
+
+public extension UIColor.SinColorConfiguration {
+  static var chrome: UIColor.SinColorConfiguration {
+    return UIColor.SinColorConfiguration(a: Point3D((0.5, 0.5, 0.5)),
+                                         b: Point3D((0.5, 0.5, 0.5)),
+                                         c: Point3D((1.0, 1.0, 1.0)),
+                                         d: Point3D((0.00, 0.10, 0.20)))
+  }
+}

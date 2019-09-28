@@ -14,3 +14,9 @@ import Foundation
 public func choose<T>(withProbability probability: CGFloat, between a: T, or b: T) -> T {
   return CGFloat.random(in: 0...1) <= probability ? a : b
 }
+
+public extension CGFloat {
+  static func random(around: CGFloat, dispersion: CGFloat) -> CGFloat {
+    return CGFloat.random(in: (around - dispersion)...(around + dispersion))
+  }
+}

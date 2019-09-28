@@ -23,4 +23,8 @@ public extension CGContext {
   func addCircle(_ circle: Circle) {
     self.addEllipse(in: circle.bounds)
   }
+
+  func addPolygon(_ polygon: Polygon) {
+    self.addPath(polygon.cgPath)
+  }
 }

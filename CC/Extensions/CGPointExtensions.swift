@@ -12,6 +12,45 @@ public extension CGPoint {
   init(_ x: CGFloat, _ y: CGFloat) {
     self.init(x: x, y: y)
   }
+  init(_ x: Int, _ y: Int) {
+    self.init(x: CGFloat(x), y: CGFloat(y))
+  }
+}
+
+public extension CGPoint {
+  func moved(by distance: CGFloat, inDirection direction: CGFloat) -> CGPoint {
+    return CGPoint(angle: direction,
+                   distance: distance,
+                   from: self)
+  }
+
+  mutating func move(by distance: CGFloat, inDirection direction: CGFloat) {
+    let newPoint = self.moved(by: distance, inDirection: direction)
+    self.x = newPoint.x
+    self.y = newPoint.y
+  }
+}
+
+public extension CGPoint {
+  /// Rounding of CGPoints
+  static func filterOutSimilar(_ points: [CGPoint], precision: Int = 2) -> [CGPoint] {
+    if points.count <= 1 {
+      return points
+    }
+    return Array(Set(points.map {
+      CustomHashable(value: $0, hashCalculator: { (p: CGPoint, hasher: inout Hasher) in
+        let p = p.rounded(to: precision)
+        hasher.combine(p.x)
+        hasher.combine(p.y)
+      }, equalityCalculator: { (p1: CGPoint, p2: CGPoint) -> Bool in
+        let p1 = p1.rounded(to: precision)
+        let p2 = p2.rounded(to: precision)
+        return p1.x == p2.x && p1.y == p2.y
+      })
+    })).map { (hashable: CustomHashable<CGPoint>) -> CGPoint in
+      hashable.value
+    }
+  }
 }
 
 public extension CGPoint {
@@ -133,6 +172,11 @@ public extension CGPoint {
   static func random(angle: ClosedRange<CGFloat> = 0...CGFloat.pi * 2, magnitude: ClosedRange<CGFloat>, from origin: CGPoint = .zero) -> CGPoint {
     return CGPoint(angle: CGFloat.random(in: angle), distance: CGFloat.random(in: magnitude), from: origin)
   }
+
+  static func random(in rect: CGRect) -> CGPoint {
+    return CGPoint(x: CGFloat.random(in: rect.minX..<rect.maxX),
+                   y: CGFloat.random(in: rect.minY..<rect.maxY))
+  }
 }
 
 public extension CGPoint {
@@ -143,7 +187,11 @@ public extension CGPoint {
 }
 
 public extension CGPoint {
-  func dot(_ other: CGPoint) -> CGFloat {
-    return self.length * other.length * cos(other.polarAngle(reference: self))
+  func dot(_ other: CGPoint) ->  CGFloat {
+    return self.x  * other.x + self.y * other.y
+  }
+
+  func cross(_ other: CGPoint) -> CGFloat {
+    return self.x  * other.y - self.y * other.x
   }
 }

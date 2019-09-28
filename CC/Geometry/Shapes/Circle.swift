@@ -39,7 +39,11 @@ public extension Circle {
     return length / self.radius
   }
 
+  func length(for angle: CGFloat) -> CGFloat {
+    return radius * angle
+  }
+
   func point(at angle: CGFloat) -> CGPoint {
-  return CGPoint(angle: angle, distance: radius, from: center)
+    return CGPoint(angle: angle, distance: radius, from: center)
   }
 }

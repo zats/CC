@@ -16,6 +16,13 @@ public extension CGImage {
       [3/16, 5/16, 1/16],
   ]
 
+  static let jarvisError: [[Double]] =
+    [
+      [0, 7/48, 5/48],
+      [3/48, 5/48, 7/48, 5/48, 3/48],
+      [1/48, 3/48, 5/48, 3/48, 1/48],
+  ]
+
   private static func error(for pixel: Int) -> (value: Int, error: Int) {
     if pixel < 128 {
       return (value: 0, error: Int(pixel))
@@ -48,15 +55,22 @@ public extension CGImage {
     }
   }
 
-  func dither(errorDefinition: [[Double]], inverted: Bool = false) -> [CGPoint] {
-    let pixels = self.rgbaBytes2()!
+  func dither(errorDefinition: [[Double]], scale: CGFloat = 1, inverted: Bool = false) -> [CGPoint] {
+    var img = self
+    if scale != 1 {
+      let uiImg = UIImage(cgImage: self, scale: scale, orientation: .up)
+      img = uiImg.cgImage!
+    }
+
+    let pixels = img.rgbaBytes2()!
     var luminocity = pixels
       .enumerated()
       .filter { $0.offset % 4 == 0 }
       .map { Int($0.element) }
 
-    for y in 0..<height {
-      for x in 0..<width {
+
+    for y in stride(from: 0, to: img.height, by: 1) {
+      for x in stride(from: 0, to: img.height, by: 1) {
         let index = y * width + x
         let pixel = luminocity[index]
         let value = valueAndError(for: pixel)
@@ -73,7 +87,7 @@ public extension CGImage {
       .map {
         let y = $0.offset / width
         let x = $0.offset -  y * width
-        return CGPoint(x: CGFloat(x), y: CGFloat(y))
+        return CGPoint(x: CGFloat(x), y: CGFloat(y)) / scale
     }
   }
 

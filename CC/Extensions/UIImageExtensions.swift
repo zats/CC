@@ -73,6 +73,20 @@ public extension UIImage {
     }
   }
 
+  func pixelsArray() -> [[UIColor]] {
+    var rows: [[UIColor]] = []
+    let pixels = rgbaBytes()!
+    for x in 0..<Int(size.width) {
+      var column: [UIColor] = []
+      for y in 0..<Int(size.height) {
+        let index = (x + y * Int(size.width)) * 4
+        column.append(UIColor(red: pixels[index], green: pixels[index+1], blue: pixels[index+2], alpha: pixels[index+3]))
+      }
+      rows.append(column)
+    }
+    return rows
+  }
+
   func rgbaBytes() -> [UInt8]? {
     return cgImage?.rgbaBytes()
   }

@@ -10,6 +10,18 @@ import Foundation
 
 public struct Polygon {
   public var vertices: [CGPoint]
+
+  public init(vertices: [CGPoint]) {
+    self.vertices = vertices
+  }
+}
+
+public extension Polygon {
+  init(numberOfVertices: Int, radius: CGFloat, center: CGPoint, orientation: CGFloat) {
+    self.init(vertices: stride(from: 0, to: CGFloat.pi * 2, by: CGFloat.pi * 2 / CGFloat(numberOfVertices)).map {
+      CGPoint(angle: $0 + orientation, distance: radius, from: center)
+    })
+  }
 }
 
 public extension Polygon {
@@ -27,5 +39,12 @@ public extension Polygon {
       CGPoint(x: rect.maxX, y: rect.maxY),
       CGPoint(x: rect.maxX, y: rect.minY),
     ]
+  }
+
+  var cgPath: CGPath {
+    let path = CGMutablePath()
+    path.addLines(between: self.vertices)
+    path.closeSubpath()
+    return path
   }
 }
